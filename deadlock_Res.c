@@ -15,7 +15,7 @@ void *processA(void *arg) {
 
     pthread_mutex_lock(&file1_mutex); // bloqueia o arquivo 1
     printf("Processo A abriu o arquivo 1\n");
-    sleep(1); // Simula algum processamento com o arquivo 1
+    sleep(2); // Simula algum processamento com o arquivo 1
 
     printf("Processo A tentando abrir o arquivo 2...\n");
     if (pthread_mutex_timedlock(&file2_mutex, &ts) != 0) { // Tenta adquirir o mutex com timeout
@@ -45,7 +45,7 @@ void *processB(void *arg) {
 
     pthread_mutex_lock(&file2_mutex); // bloqueia o arquivo 2
     printf("Processo B abriu o arquivo 2\n");
-    sleep(1); // Simula algum processamento com o arquivo 2
+    sleep(2); // Simula algum processamento com o arquivo 2
 
     printf("Processo B tentando abrir o arquivo 1...\n");
     if (pthread_mutex_timedlock(&file1_mutex, &ts) != 0) { // Tenta adquirir o mutex com timeout
