@@ -13,24 +13,25 @@ void *processA(void *arg) {
     clock_gettime(CLOCK_REALTIME, &ts);
     ts.tv_sec += TIME_LIMIT_SEC; // Define o tempo limite para o mutex
 
-    pthread_mutex_lock(&file1_mutex); // bloqueia o arquivo 1
+    pthread_mutex_lock(&file1_mutex); // Bloqueia o arquivo 1
     printf("Processo A abriu o arquivo 1\n");
     sleep(1); // Simula algum processamento com o arquivo 1
 
-    // Tenta adquirir o mutex do arquivo 2
-    if (pthread_mutex_timedlock(&file2_mutex, &ts) != 0) {  // Verifica se o arquivo 2 está bloqueado
-        if (errno == ETIMEDOUT) {
+    // Tenta adquirir o mutex do arquivo 2 com tempo limite
+    if (pthread_mutex_timedlock(&file2_mutex, &ts) != 0) {  
+        if (errno == ETIMEDOUT) { // Verifica se o tempo limite foi atingido
             printf("Processo A: Deadlock detectado durante a tentativa de acesso ao arquivo 2\n");
-            // Libera o recurso já adquirido
+            // Libera o recurso já adquirido para evitar deadlock
             pthread_mutex_unlock(&file1_mutex);
-            printf("Processo A: Recursos liberados\n");
+            printf("Processo A: Recursos liberados após detectar deadlock\n");
         } else {
-            perror("pthread_mutex_timedlock");
+            perror("pthread_mutex_timedlock"); // Imprime mensagem de erro se não for ETIMEDOUT
         }
     } else {
+        // Se conseguir adquirir o mutex do arquivo 2
         printf("Processo A abriu o arquivo 2\n");
         printf("Processo A consumindo arquivos 1 e 2\n");
-        pthread_mutex_unlock(&file2_mutex); // libera o arquivo 2
+        pthread_mutex_unlock(&file2_mutex); // Libera o arquivo 2
     }
     
     pthread_mutex_unlock(&file1_mutex); // Libera o arquivo 1
@@ -42,28 +43,29 @@ void *processB(void *arg) {
     clock_gettime(CLOCK_REALTIME, &ts);
     ts.tv_sec += TIME_LIMIT_SEC; // Define o tempo limite para o mutex
 
-    sleep(1);
-    pthread_mutex_lock(&file2_mutex); // bloqueia o arquivo 2
+    sleep(1); // Dá um atraso para aumentar a chance de deadlock
+    pthread_mutex_lock(&file2_mutex); // Bloqueia o arquivo 2
     printf("Processo B abriu o arquivo 2\n");
     sleep(1); // Simula algum processamento com o arquivo 2
 
-    // Tenta adquirir o mutex do arquivo 1
-    if (pthread_mutex_timedlock(&file1_mutex, &ts) != 0) {  // Verifica se o arquivo 1 está bloqueado
-        if (errno == ETIMEDOUT) {
+    // Tenta adquirir o mutex do arquivo 1 com tempo limite
+    if (pthread_mutex_timedlock(&file1_mutex, &ts) != 0) {  
+        if (errno == ETIMEDOUT) { // Verifica se o tempo limite foi atingido
             printf("Processo B: Deadlock detectado durante a tentativa de acesso ao arquivo 1\n");
-            // Libera o recurso já adquirido
+            // Libera o recurso já adquirido para evitar deadlock
             pthread_mutex_unlock(&file2_mutex);
-            printf("Processo B: Recursos liberados\n");
+            printf("Processo B: Recursos liberados após detectar deadlock\n");
         } else {
-            perror("pthread_mutex_timedlock");
+            perror("pthread_mutex_timedlock"); // Imprime mensagem de erro se não for ETIMEDOUT
         }
     } else {
+        // Se conseguir adquirir o mutex do arquivo 1
         printf("Processo B abriu o arquivo 1\n");
         printf("Processo B consumindo arquivos 1 e 2\n");
-        pthread_mutex_unlock(&file1_mutex); // libera o arquivo 1
+        pthread_mutex_unlock(&file1_mutex); // Libera o arquivo 1
     }
     
-    pthread_mutex_unlock(&file2_mutex); // libera o arquivo 2
+    pthread_mutex_unlock(&file2_mutex); // Libera o arquivo 2
     return NULL;
 }
 
