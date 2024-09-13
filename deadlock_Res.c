@@ -6,7 +6,7 @@
 
 pthread_mutex_t file1_mutex, file2_mutex;
 
-#define TIME_LIMIT_SEC 0.05 // Tempo limite para detecção de deadlock em segundos.
+#define TIME_LIMIT_SEC 0.0005 // Tempo limite para detecção de deadlock em segundos.
 
 void *processA(void *arg) {
     struct timespec ts;
