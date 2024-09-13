@@ -14,16 +14,14 @@ void *processA(void *arg) {
         printf("Processo A: Deadlock detectado durante a tentativa de acesso do arquivo 2\n");
     } else {
         printf("Processo A: Sem detecção de Deadlock durante a abaertura do arquivo \n");
+        printf("Processo A abriu o arquivo 2\n");
 
-    pthread_mutex_lock(&file2_mutex); // tenta bloquear o arquivo 2
-    printf("Processo A abriu o arquivo 2\n");
-
-    // simula o uso dos dos arquivos
-    printf("Processo A consumindo arquivos 1 e 2\n");
-
-    // Libera os arquivos
-    pthread_mutex_unlock(&file2_mutex);
-    pthread_mutex_unlock(&file1_mutex);
+        // simula o uso dos dos arquivos
+        printf("Processo A consumindo arquivos 1 e 2\n");
+        pthread_mutex_unlock(&file2_mutex); // libera o arquivo 2
+    }
+    
+    pthread_mutex_unlock(&file1_mutex);    // Libera o arquivo 1
   
 }
 
@@ -39,16 +37,15 @@ void *processB(void *arg) {
         printf("Processo B: Deadlock detectado durante a tentativa de acesso do arquivo 1\n");
     } else {
         printf("Processo B: Sem detecção de Deadlock durante a abaertura do arquivo \n");
+        printf("Processo B abriu o arquivo 1\n"); 
 
-    pthread_mutex_lock(&file1_mutex);
-    printf("Processo B abriu o arquivo 1\n"); 
-
-    // simula o uso dos dos arquivos
-    printf("Processo A consumindo arquivos 1 e 2\n");
-
-    // Release locks
-    pthread_mutex_unlock(&file1_mutex);
-    pthread_mutex_unlock(&file2_mutex);
+        // simula o uso dos dos arquivos
+        printf("Processo A consumindo arquivos 1 e 2\n");
+        
+        pthread_mutex_unlock(&file1_mutex); // libera o arquivo 1
+    }
+  
+    pthread_mutex_unlock(&file2_mutex); // libera o arquivo 2
 }
 
 int main() {
