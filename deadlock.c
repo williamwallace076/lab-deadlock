@@ -9,6 +9,12 @@ void *processA(void *arg) {
     printf("Processo A abriu o arquivo 1\n"); 
     sleep(2); // Simula algum processamento com o arquivo 1
 
+    // Tenta adquirir o mutex do arquivo 1
+    if (pthread_mutex_trylock(&file2_mutex) != 0) {  // Verifica se o arquivo 1 está bloqueado
+        printf("Processo A: Deadlock detectado durante a tentativa de acesso do arquivo 2\n");
+    } else {
+        printf("Processo A: Sem detecção de Deadlock durante a abaertura do arquivo \n");
+
     pthread_mutex_lock(&file2_mutex); // tenta bloquear o arquivo 2
     printf("Processo A abriu o arquivo 2\n");
 
@@ -26,7 +32,14 @@ void *processB(void *arg) {
     pthread_mutex_lock(&file2_mutex);
     printf("Processo B abriu o arquivo 2\n");
     sleep(2); // Simula algum processamento com o arquivo 1
-  
+
+
+     // Tenta adquirir o mutex do arquivo 1
+    if (pthread_mutex_trylock(&file1_mutex) != 0) {  // Verifica se o arquivo 1 está bloqueado
+        printf("Processo B: Deadlock detectado durante a tentativa de acesso do arquivo 1\n");
+    } else {
+        printf("Processo B: Sem detecção de Deadlock durante a abaertura do arquivo \n");
+
     pthread_mutex_lock(&file1_mutex);
     printf("Processo B abriu o arquivo 1\n"); 
 
