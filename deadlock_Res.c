@@ -40,6 +40,7 @@ void *processA(void *arg) {
 
 void *processB(void *arg) {
     struct timespec ts;
+    sleep(1); // atraso no deadlock
     clock_gettime(CLOCK_REALTIME, &ts);
     ts.tv_sec += TIME_LIMIT_SEC; // Define o tempo limite
 
