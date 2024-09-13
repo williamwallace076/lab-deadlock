@@ -26,7 +26,7 @@ void *processA(void *arg) {
 }
 
 void *processB(void *arg) {
-  
+    sleep(1); // atrasando o processo b
     pthread_mutex_lock(&file2_mutex);
     printf("Processo B abriu o arquivo 2\n");
     sleep(2); // Simula algum processamento com o arquivo 1
